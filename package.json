@@ -1,8 +1,9 @@
 {
   "name": "magpie-camouflage",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Magpie 提示词伪装与特征过滤插件 - 发往供应商自动附加指令，客户端发出自动抹除特征（注：仅在应用层伪装提示词文本，非全链路指纹伪装，风险自担）",
   "main": "index.js",
+  "kind": "middleware",
   "files": [
     "index.js",
     "daemon.mjs",
@@ -31,6 +32,12 @@
     "url": "https://github.com/zrtzrt/magpie-camouflage/issues"
   },
   "magpie": {
+    "name": "伪装 (Camouflage)",
+    "kind": "middleware",
+    "summary": {
+      "zh": "提示词伪装与特征过滤插件 - 发往供应商自动附加指令，客户端发出自动抹除特征（解耦管理，风险自担）",
+      "en": "Prompt camouflage & masking middleware - auto-inject prompts to upstream, strip signatures from clients"
+    },
     "page": {
       "title": "伪装",
       "titles": {
