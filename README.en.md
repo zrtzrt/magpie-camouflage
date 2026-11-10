@@ -8,6 +8,10 @@ A decoupled **Prompt Camouflage & Feature Shielding Middleware and UI Panel (Pag
 
 Automatically appends required camouflage prompts when routing to configured providers, and scrubs proprietary client prompt signatures when requests originate from configured local clients.
 
+<p align="center">
+  <img src="docs/images/screenshot.png" alt="Magpie Camouflage Preview" width="720" />
+</p>
+
 ---
 
 ## ⚠️ Important Disclaimer & Risk Notice

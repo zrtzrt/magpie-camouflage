@@ -1,11 +1,10 @@
 // test.js - Unit tests for Camouflage plugin (全解耦架构)
 
-const { onRequest } = require('./index');
-const { REAL_SESSIONS } = require('./page/real-sessions');
+import { onRequest } from './index.js';
 
-function runTest(name, fn) {
+async function runTest(name, fn) {
   try {
-    fn();
+    await fn();
     console.log(`✅ [PASS] ${name}`);
   } catch (err) {
     console.error(`❌ [FAIL] ${name}:`, err.message);
@@ -15,13 +14,7 @@ function runTest(name, fn) {
 
 console.log("🚀 开始运行全解耦架构单元测试...\n");
 
-// 从真实反重力会话提取身份提示词
-const realAntigravity = REAL_SESSIONS.find(s => s.agent === "antigravity");
-const endTag = "</identity>";
-const slicedAntigravityPrompt = realAntigravity.fullPrompt.substring(
-  0,
-  realAntigravity.fullPrompt.indexOf(endTag) + endTag.length
-).trim();
+const slicedAntigravityPrompt = "<identity>\nYou are Antigravity, a powerful agentic AI coding assistant designed by the Google Deepmind team working on Advanced Agentic Coding.\n</identity>";
 
 // 全解耦配置：
 // - 客户端配置：dsh 发出的全部去掉 '我是dsh'
@@ -47,7 +40,7 @@ const decoupledOptions = {
 };
 
 // 测试 1: 解耦特性 - DSH 发出的请求，发往 DeepSeek：去掉 DSH 特征，加上 DeepSeek 提示词
-runTest("测试 1: DSH -> DeepSeek (客户端去掉特征 + 供应商加上提示词)", () => {
+await runTest("测试 1: DSH -> DeepSeek (客户端去掉特征 + 供应商加上提示词)", async () => {
   const body = {
     model: "deepseek/deepseek-chat",
     messages: [
@@ -55,7 +48,7 @@ runTest("测试 1: DSH -> DeepSeek (客户端去掉特征 + 供应商加上提�
     ]
   };
   const ctx = { options: decoupledOptions, agent: "dsh", model: "deepseek/deepseek-chat" };
-  const res = onRequest(body, ctx);
+  const res = await onRequest(body, ctx);
 
   if (res.messages[1].content.includes("我是dsh")) {
     throw new Error("DSH 客户端特征词 '我是dsh' 未被去掉！");
@@ -66,7 +59,7 @@ runTest("测试 1: DSH -> DeepSeek (客户端去掉特征 + 供应商加上提�
 });
 
 // 测试 2: 解耦特性 - DSH 发往 OpenAI (未配置供应商提示词)：去掉 DSH 特征，但不附加 DeepSeek 的提示词
-runTest("测试 2: DSH -> OpenAI (客户端依然去掉特征，但不会错加 DeepSeek 的提示词)", () => {
+await runTest("测试 2: DSH -> OpenAI (客户端依然去掉特征，但不会错加 DeepSeek 的提示词)", async () => {
   const body = {
     model: "openai/gpt-4o",
     messages: [
@@ -74,7 +67,7 @@ runTest("测试 2: DSH -> OpenAI (客户端依然去掉特征，但不会错加 
     ]
   };
   const ctx = { options: decoupledOptions, agent: "dsh", model: "openai/gpt-4o" };
-  const res = onRequest(body, ctx);
+  const res = await onRequest(body, ctx);
 
   if (res.messages[0].content.includes("我是dsh")) {
     throw new Error("DSH 客户端特征词未被去掉！");
@@ -85,7 +78,7 @@ runTest("测试 2: DSH -> OpenAI (客户端依然去掉特征，但不会错加 
 });
 
 // 测试 3: 解耦特性 - 其他客户端发往 DeepSeek：加上 DeepSeek 提示词
-runTest("测试 3: Claude -> DeepSeek (所有发往 DeepSeek 的请求都加上配置的提示词)", () => {
+await runTest("测试 3: Claude -> DeepSeek (所有发往 DeepSeek 的请求都加上配置的提示词)", async () => {
   const body = {
     model: "deepseek/deepseek-chat",
     messages: [
@@ -93,7 +86,7 @@ runTest("测试 3: Claude -> DeepSeek (所有发往 DeepSeek 的请求都加上�
     ]
   };
   const ctx = { options: decoupledOptions, agent: "claude", model: "deepseek/deepseek-chat" };
-  const res = onRequest(body, ctx);
+  const res = await onRequest(body, ctx);
 
   if (!res.messages[0].content.includes("<identity>")) {
     throw new Error("发往 DeepSeek 未能附加提示词！");

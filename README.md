@@ -8,6 +8,10 @@
 
 发往指定供应商的请求自动加上伪装提示词；由指定客户端发出的请求自动屏蔽其专有特征词。
 
+<p align="center">
+  <img src="docs/images/screenshot.png" alt="Magpie Camouflage 控制面板预览" width="720" />
+</p>
+
 ---
 
 ## ⚠️ 重要声明与风险警示 (Risk Warning & Disclaimer)

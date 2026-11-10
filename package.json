@@ -1,6 +1,6 @@
 {
   "name": "magpie-camouflage",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Magpie 提示词伪装与特征过滤插件 - 发往供应商自动附加指令，客户端发出自动抹除特征（注：仅在应用层伪装提示词文本，非全链路指纹伪装，风险自担）",
   "type": "module",
   "kind": "middleware",
@@ -9,6 +9,7 @@
     "index.js",
     "daemon.mjs",
     "page",
+    "docs",
     "README.md",
     "README.en.md",
     "LICENSE"
