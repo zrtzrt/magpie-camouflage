@@ -384,7 +384,3 @@ export function onRequest(body, ctx) {
   return body;
 }
 
-export default {
-  id: "camouflage",
-  server: () => ({})
-};

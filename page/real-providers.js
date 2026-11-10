@@ -66,7 +66,7 @@ const REAL_PROVIDERS = [
     "icon": "808e1ca7659cb52e.ico",
     "user": "API key",
     "plan": "OpenCode Zen Free",
-    "modelsCount": 11,
+    "modelsCount": 12,
     "off": false,
     "isGroup": false
   },
