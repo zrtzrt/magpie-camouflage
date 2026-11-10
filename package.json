@@ -1,6 +1,6 @@
 {
   "name": "magpie-camouflage",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Magpie 提示词伪装与特征过滤插件 - 发往供应商自动附加指令，客户端发出自动抹除特征（注：仅在应用层伪装提示词文本，非全链路指纹伪装，风险自担）",
   "main": "index.js",
   "kind": "middleware",
@@ -34,6 +34,7 @@
   "magpie": {
     "name": "伪装 (Camouflage)",
     "kind": "middleware",
+    "icon": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiBmaWxsPSJub25lIj4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0ic2hpZWxkR3JhZCIgeDE9IjIiIHkxPSIyIiB4Mj0iMjIiIHkyPSIyMiIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjM0I4MkY2Ii8+CiAgICAgIDxzdG9wIG9mZnNldD0iNTAlIiBzdG9wLWNvbG9yPSIjOEI1Q0Y2Ii8+CiAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iI0VDNDg5OSIvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICA8L2RlZnM+CiAgPHBhdGggZD0iTTEyIDJMMyA2VjExQzMgMTYuNTUgNi44NCAyMS43NCAxMiAyM0MxNy4xNiAyMS43NCAyMSAxNi41NSAyMSAxMVY2TDEyIDJaIiBzdHJva2U9InVybCgjc2hpZWxkR3JhZCkiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CiAgPCEtLSBDYW1vdWZsYWdlIC8gRGlzZ3Vpc2UgTWFzayBpbnNpZGUgLS0+CiAgPHBhdGggZD0iTTcgMTFDNyA5Ljg5NTQzIDguMzQzMTUgOSAxMCA5QzExLjY1NjkgOSAxMiAxMC41IDEyIDEwLjVDMTIgMTAuNSAxMi4zNDMxIDkgMTQgOUMxNS42NTY5IDkgMTcgOS44OTU0MyAxNyAxMUMxNyAxMi4xMDQ2IDE1LjY1NjkgMTMuNSAxNCAxMy41QzEyLjUgMTMuNSAxMiAxMiAxMiAxMkMxMiAxMiAxMS41IDEzLjUgMTAgMTMuNUM4LjM0MzE1IDEzLjUgNyAxMi4xMDQ2IDcgMTFaIiBmaWxsPSJ1cmwoI3NoaWVsZEdyYWQpIiBmaWxsLW9wYWNpdHk9IjAuMjUiIHN0cm9rZT0idXJsKCNzaGllbGRHcmFkKSIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgogIDxjaXJjbGUgY3g9IjEwIiBjeT0iMTEuMiIgcj0iMSIgZmlsbD0iIzNCODJGNiIvPgogIDxjaXJjbGUgY3g9IjE0IiBjeT0iMTEuMiIgcj0iMSIgZmlsbD0iIzhCNUNGNiIvPgo8L3N2Zz4K",
     "summary": {
       "zh": "提示词伪装与特征过滤插件 - 发往供应商自动附加指令，客户端发出自动抹除特征（解耦管理，风险自担）",
       "en": "Prompt camouflage & masking middleware - auto-inject prompts to upstream, strip signatures from clients"
