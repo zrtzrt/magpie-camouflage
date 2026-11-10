@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>伪装</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- 顶部栏：Tab 切换与伪装总开关 -->
+  <header class="app-header">
+    <div class="set-tabs" role="tablist">
+      <button type="button" class="tab-btn active" data-tab="tab-rules" role="tab" aria-selected="true">规则</button>
+      <button type="button" class="tab-btn" data-tab="tab-providers" role="tab" aria-selected="false">供应商</button>
+      <button type="button" class="tab-btn" data-tab="tab-clients" role="tab" aria-selected="false">客户端</button>
+      <button type="button" class="tab-btn" data-tab="tab-history" role="tab" aria-selected="false">历史</button>
+    </div>
+
+    <div class="master-switch-wrap">
+      <span>伪装总开关</span>
+      <button type="button" class="lib-switch pswitch on" id="master-switch" role="switch" aria-checked="true" aria-label="伪装总开关">
+        <i></i>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <!-- 1. 规则概览标签页 (排在最前面) -->
+    <section id="tab-rules" class="tab-panel active">
+      <div class="rules-hero">
+        <div>
+          <div class="rules-hero-title">解耦伪装系统</div>
+          <div class="rules-hero-desc">所有发往已配置供应商的请求自动加上提示词；所有由已配置客户端发出的请求自动屏蔽特征。</div>
+        </div>
+        <button type="button" class="text danger" id="btn-clear-all-rules">清空全部规则</button>
+      </div>
+
+      <!-- 生效中的供应商附加规则 -->
+      <div class="section-head">
+        <span class="label">当前生效的供应商附加规则</span>
+        <span class="muted" id="provider-rules-count">0 项启用</span>
+      </div>
+      <div id="active-provider-rules" class="rule-cards-grid">
+        <!-- 动态渲染生效的供应商规则卡片 -->
+      </div>
+      <div id="empty-provider-rules" class="empty-state" hidden>
+        <b>暂未启用任何供应商提示词附加</b>
+        <span>可在「供应商」标签页中选择渠道并配置附加提示词。</span>
+      </div>
+
+      <!-- 生效中的客户端屏蔽规则 -->
+      <div class="section-head" style="margin-top: 24px;">
+        <span class="label">当前生效的客户端屏蔽规则</span>
+        <span class="muted" id="client-rules-count">0 项启用</span>
+      </div>
+      <div id="active-client-rules" class="rule-cards-grid">
+        <!-- 动态渲染生效的客户端屏蔽规则卡片 -->
+      </div>
+      <div id="empty-client-rules" class="empty-state" hidden>
+        <b>暂未启用任何客户端提示词屏蔽</b>
+        <span>可在「客户端」标签页中选择客户端并配置过滤屏蔽规则。</span>
+      </div>
+    </section>
+
+    <!-- 2. 供应商列表标签页 (完全对标官方样式) -->
+    <section id="tab-providers" class="tab-panel" hidden>
+      <!-- 搜索栏与账号打码开关 -->
+      <div class="pv-head">
+        <div class="search-box-wrap">
+          <svg class="search-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8">
+            <circle cx="6.5" cy="6.5" r="4.5"/>
+            <line x1="10" y1="10" x2="14" y2="14"/>
+          </svg>
+          <input class="sess-filter pv-q" id="pvQ" type="search" spellcheck="false" autocomplete="off" placeholder="查找供应商" aria-label="查找供应商">
+        </div>
+
+        <button type="button" class="text rt-mask" id="pvMask" aria-pressed="true">
+          <svg viewBox="0 0 16 16" width="13" height="13" fill="currentColor">
+            <path d="M13.359 11.238C15.06 9.72 16 8 16 8s-3-5.5-8-5.5a7.028 7.028 0 0 0-2.79.588l.77.771A5.944 5.944 0 0 1 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.134 13.134 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755-.165.165-.337.328-.517.486l.708.709z"/>
+            <path d="M11.297 9.176a3.5 3.5 0 0 0-4.474-4.474l.823.823a2.5 2.5 0 0 1 2.829 2.829l.822.822zm-2.943 1.299.822.822a3.5 3.5 0 0 1-4.474-4.474l.823.823a2.5 2.5 0 0 0 2.829 2.829z"/>
+            <path d="M3.35 5.47c-.18.16-.353.322-.518.487A13.134 13.134 0 0 0 1.172 8l.195.288c.335.48.83 1.12 1.465 1.755C4.121 11.332 5.881 12.5 8 12.5c.716 0 1.39-.133 2.02-.36l.77.772A7.029 7.029 0 0 1 8 13.5C3 13.5 0 8 0 8s.939-1.721 2.641-3.238l.708.709zm10.296 8.884-12-12 .708-.708 12 12-.708.708z"/>
+          </svg>
+          <span id="mask-status-text">账号已打码</span>
+        </button>
+      </div>
+
+      <!-- 单卡片连续供应商列表 -->
+      <div class="list" id="providersList">
+        <!-- 动态渲染各供应商行 -->
+      </div>
+      <div id="no-provider-match" class="empty-state" hidden>
+        <b>没有匹配的供应商</b>
+        <span>尝试其他搜索关键词</span>
+      </div>
+    </section>
+
+    <!-- 3. 客户端列表标签页 -->
+    <section id="tab-clients" class="tab-panel" hidden>
+      <div class="pv-head">
+        <div class="search-box-wrap">
+          <svg class="search-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8">
+            <circle cx="6.5" cy="6.5" r="4.5"/>
+            <line x1="10" y1="10" x2="14" y2="14"/>
+          </svg>
+          <input class="sess-filter pv-q" id="clientQ" type="search" spellcheck="false" autocomplete="off" placeholder="查找客户端" aria-label="查找客户端">
+        </div>
+      </div>
+
+      <!-- 单卡片连续客户端列表 -->
+      <div class="list" id="clientsList">
+        <!-- 动态渲染各客户端行 -->
+      </div>
+      <div id="no-client-match" class="empty-state" hidden>
+        <b>没有匹配的客户端</b>
+        <span>尝试其他搜索关键词</span>
+      </div>
+    </section>
+
+    <!-- 4. 历史记录标签页 (新增: 查看是否替换成功) -->
+    <section id="tab-history" class="tab-panel" hidden>
+      <div class="history-hero">
+        <div>
+          <div class="rules-hero-title">调用历史与替换验证</div>
+          <div class="rules-hero-desc">实时记录网关拦截的请求，点击条目可查看客户端特征是否成功屏蔽、供应商提示词是否成功附加。</div>
+        </div>
+        <div class="history-actions">
+          <button type="button" class="text" id="btn-refresh-history">
+            <svg viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M1 4v4h4M15 12v-4h-4"/>
+              <path d="M13.5 6A6 6 0 0 0 3 4.5L1 8m14 0l-2 3.5A6 6 0 0 1 2.5 10"/>
+            </svg>
+            刷新
+          </button>
+          <button type="button" class="text danger" id="btn-clear-history">清空历史</button>
+        </div>
+      </div>
+
+      <!-- 搜索与状态过滤 -->
+      <div class="pv-head">
+        <div class="search-box-wrap">
+          <svg class="search-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8">
+            <circle cx="6.5" cy="6.5" r="4.5"/>
+            <line x1="10" y1="10" x2="14" y2="14"/>
+          </svg>
+          <input class="sess-filter pv-q" id="historyQ" type="search" spellcheck="false" autocomplete="off" placeholder="查找历史 (模型/供应商/客户端)" aria-label="查找历史">
+        </div>
+
+        <select id="historyStatusFilter" class="words" style="max-width: 160px; height: 28px; font-size: 12px;">
+          <option value="all">全部执行状态</option>
+          <option value="success">双向替换成功</option>
+          <option value="stripped">客户端特征屏蔽成功</option>
+          <option value="injected">供应商提示词附加成功</option>
+          <option value="passthrough">未触发规则 (直通)</option>
+        </select>
+      </div>
+
+      <!-- 单卡片连续历史记录列表 -->
+      <div class="list" id="historyList">
+        <!-- 动态渲染历史记录行 -->
+      </div>
+      <div id="empty-history" class="empty-state" hidden>
+        <b>暂无调用历史记录</b>
+        <span>当您通过客户端向 Magpie 网关发起请求时，此处将实时记录拦截与替换状态。</span>
+      </div>
+    </section>
+  </main>
+
+  <!-- 供应商配置弹窗 (Provider Settings Modal) -->
+  <div class="modal" id="providerModal" hidden>
+    <div class="dialog roomy editor framed">
+      <div class="ehead">
+        <div class="ag-handle pv-handle" id="modalProviderIcon"></div>
+        <div class="who">
+          <div class="name" id="modalProviderTitle">供应商附加提示词设置</div>
+          <div class="sub" id="modalProviderSub">所有发往该供应商的请求，均自动注入伪装提示词</div>
+        </div>
+        <button type="button" class="modal-close-btn" id="btnCloseProviderModal" aria-label="关闭">✕</button>
+      </div>
+
+      <div class="ebody">
+        <!-- 1. 会话历史获取提示词 -->
+        <div class="dialog-section">
+          <div class="dialog-section-title">
+            <span>从真实会话历史获取提示词</span>
+            <span class="muted">默认使用全部提示词</span>
+          </div>
+          
+          <div class="session-picker-row">
+            <select id="select-provider-session" class="words"></select>
+            <button type="button" class="text primary" id="btn-load-provider-session">载入该会话全部提示词</button>
+          </div>
+
+          <div class="field-label">
+            <span>原始会话提示词 (可选择所需范围)</span>
+            <span class="muted" id="provider-raw-len">0 字符</span>
+          </div>
+          <textarea id="provider-raw-prompt" class="prompt-textarea raw" readonly placeholder="未选择会话或该渠道暂无历史会话数据"></textarea>
+          
+          <div class="slice-actions">
+            <button type="button" class="text" id="btn-use-provider-selection">使用选中文本</button>
+            <button type="button" class="text" id="btn-slice-provider-paragraph">截取首个大段</button>
+          </div>
+        </div>
+
+        <!-- 2. 最终目标提示词设置 -->
+        <div class="dialog-section">
+          <div class="dialog-section-title">
+            <span>最终附加提示词设置</span>
+            <button type="button" class="text danger" id="btn-clear-target-prompt-input" style="padding: 2px 8px; font-size: 11px;">清空输入内容</button>
+          </div>
+
+          <div class="field-label">
+            <span>附加提示词内容 (无配置或没数据则为空)</span>
+            <span class="muted" id="provider-target-len">0 字符</span>
+          </div>
+          <textarea id="provider-target-prompt" class="prompt-textarea" placeholder="暂未配置提示词（没数据则为空，不会预置任何伪造内容）"></textarea>
+
+          <div class="position-row">
+            <label for="provider-position">注入位置：</label>
+            <select id="provider-position" class="words">
+              <option value="prepend">请求头部附加 (Prepend - 推荐)</option>
+              <option value="append">请求尾部附加 (Append)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="bar modal-footer">
+        <button type="button" class="text danger" id="btn-clear-provider-config">清空该供应商配置</button>
+        <div class="spacer"></div>
+        <button type="button" class="text" id="btn-cancel-provider-modal">取消</button>
+        <button type="button" class="text primary" id="btn-save-provider-modal">保存并生效</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 客户端屏蔽配置弹窗 (Client Settings Modal) -->
+  <div class="modal" id="clientModal" hidden>
+    <div class="dialog roomy editor framed">
+      <div class="ehead">
+        <div class="ag-handle pv-handle" id="modalClientIcon"></div>
+        <div class="who">
+          <div class="name" id="modalClientTitle">客户端特征屏蔽设置</div>
+          <div class="sub" id="modalClientSub">该客户端发往任何供应商的请求，均自动抹除指定特征</div>
+        </div>
+        <button type="button" class="modal-close-btn" id="btnCloseClientModal" aria-label="关闭">✕</button>
+      </div>
+
+      <div class="ebody">
+        <!-- 快捷从客户端会话提取 -->
+        <div class="dialog-section">
+          <div class="dialog-section-title">
+            <span>从客户端会话提取屏蔽内容</span>
+          </div>
+          <div class="session-picker-row">
+            <select id="select-client-session" class="words"></select>
+            <button type="button" class="text" id="btn-load-client-session">提取该会话全部内容为规则</button>
+          </div>
+          <textarea id="client-raw-prompt" class="prompt-textarea raw" readonly placeholder="未选择会话或该客户端暂无历史会话数据" style="height: 80px;"></textarea>
+          <div class="slice-actions">
+            <button type="button" class="text" id="btn-use-client-selection">添加选中范围为屏蔽规则</button>
+          </div>
+        </div>
+
+        <!-- 规则列表 -->
+        <div class="dialog-section">
+          <div class="dialog-section-title">
+            <span>当前过滤规则列表</span>
+            <button type="button" class="text primary" id="btn-add-client-rule" style="padding: 2px 8px; font-size: 11px;">+ 添加规则</button>
+          </div>
+          <div style="max-height: 200px; overflow-y: auto;">
+            <table class="client-rules-table">
+              <thead>
+                <tr>
+                  <th style="width: 50%;">需要抹除/替换的内容 (Pattern)</th>
+                  <th style="width: 30%;">替换为 (默认留空即删除)</th>
+                  <th style="width: 10%;">正则</th>
+                  <th style="width: 10%; text-align: center;">操作</th>
+                </tr>
+              </thead>
+              <tbody id="client-modal-rules-body">
+                <!-- 动态规则行 -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="bar modal-footer">
+        <button type="button" class="text danger" id="btn-clear-client-config">清空该客户端配置</button>
+        <div class="spacer"></div>
+        <button type="button" class="text" id="btn-cancel-client-modal">取消</button>
+        <button type="button" class="text primary" id="btn-save-client-modal">保存并生效</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 历史记录详情弹窗 (History Details Modal) -->
+  <div class="modal" id="historyModal" hidden>
+    <div class="dialog roomy editor framed">
+      <div class="ehead">
+        <div class="ag-handle pv-handle" id="modalHistoryIcon"></div>
+        <div class="who">
+          <div class="name" id="modalHistoryTitle">请求伪装与替换详情</div>
+          <div class="sub" id="modalHistorySub">查看请求拦截处理前后的完整变更与替换结果</div>
+        </div>
+        <button type="button" class="modal-close-btn" id="btnCloseHistoryModal" aria-label="关闭">✕</button>
+      </div>
+
+      <div class="ebody">
+        <!-- 统计指标网格 -->
+        <div class="history-stat-grid">
+          <div class="history-stat-card">
+            <span class="history-stat-label">目标供应商</span>
+            <span class="history-stat-val" id="hist-stat-provider">-</span>
+          </div>
+          <div class="history-stat-card">
+            <span class="history-stat-label">来源客户端</span>
+            <span class="history-stat-val" id="hist-stat-client">-</span>
+          </div>
+          <div class="history-stat-card">
+            <span class="history-stat-label">客户端特征屏蔽</span>
+            <span class="history-stat-val" id="hist-stat-stripped">-</span>
+          </div>
+          <div class="history-stat-card">
+            <span class="history-stat-label">供应商提示词附加</span>
+            <span class="history-stat-val" id="hist-stat-injected">-</span>
+          </div>
+        </div>
+
+        <!-- 命中的客户端屏蔽规则 -->
+        <div class="dialog-section" id="hist-stripped-box">
+          <div class="dialog-section-title">
+            <span>命中并抹除的客户端特征</span>
+          </div>
+          <div class="diff-badge-list" id="hist-stripped-list">
+            <!-- 动态特征标签 -->
+          </div>
+        </div>
+
+        <!-- 注入的供应商提示词信息 -->
+        <div class="dialog-section" id="hist-injected-box">
+          <div class="dialog-section-title">
+            <span>供应商提示词附加信息</span>
+            <span class="muted" id="hist-injected-summary">-</span>
+          </div>
+          <div class="diff-content" id="hist-injected-snippet" style="max-height: 90px; color: var(--fg-2);"></div>
+        </div>
+
+        <!-- 提示词替换前后完整对比 -->
+        <div class="dialog-section">
+          <div class="dialog-section-title">
+            <span>System Prompt 替换前后对比</span>
+            <div class="diff-tabs">
+              <button type="button" class="text active" id="btn-show-after-prompt">替换后 (实际发往渠道)</button>
+              <button type="button" class="text" id="btn-show-before-prompt">替换前 (客户端原始)</button>
+            </div>
+          </div>
+          <div class="diff-content" id="hist-prompt-view"></div>
+        </div>
+      </div>
+
+      <div class="bar modal-footer">
+        <button type="button" class="text" id="btn-copy-history-prompt">复制当前提示词</button>
+        <div class="spacer"></div>
+        <button type="button" class="text primary" id="btnCloseHistoryModalBottom">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" hidden></div>
+
+  <!-- 载入脚本 -->
+  <script src="_magpie/bridge.js"></script>
+  <script src="icons.js"></script>
+  <script src="real-providers.js"></script>
+  <script src="real-clients.js"></script>
+  <script src="real-sessions.js"></script>
+  <script src="history-data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

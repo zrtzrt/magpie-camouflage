@@ -1,0 +1,51 @@
+{
+  "name": "magpie-camouflage",
+  "version": "1.0.0",
+  "description": "Magpie 提示词伪装与特征过滤插件 - 发往供应商自动附加指令，客户端发出自动抹除特征（注：仅在应用层伪装提示词文本，非全链路指纹伪装，风险自担）",
+  "main": "index.js",
+  "files": [
+    "index.js",
+    "daemon.mjs",
+    "page",
+    "README.md",
+    "README.en.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "magpie",
+    "magpie-plugin",
+    "magpie-page",
+    "magpie-middleware",
+    "camouflage",
+    "prompt-masking",
+    "ai-agents"
+  ],
+  "author": "zrtzrt <519539110@qq.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zrtzrt/magpie-camouflage.git"
+  },
+  "homepage": "https://github.com/zrtzrt/magpie-camouflage#readme",
+  "bugs": {
+    "url": "https://github.com/zrtzrt/magpie-camouflage/issues"
+  },
+  "magpie": {
+    "page": {
+      "title": "伪装",
+      "titles": {
+        "zh": "伪装",
+        "zh-TW": "偽裝",
+        "en": "Camouflage",
+        "ja": "偽装"
+      },
+      "file": "page/index.html",
+      "icon": "page/icon.svg"
+    },
+    "permissions": [
+      "providers:list",
+      "usage:summary"
+    ],
+    "middleware": "./index.js"
+  }
+}
